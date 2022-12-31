@@ -1,0 +1,10 @@
+.img {
+  width: 25vw;
+  height: 60vh;
+}
+.img-container {
+  object-fit: contain;
+}
+.overview {
+  line-height: 2.3;
+}
