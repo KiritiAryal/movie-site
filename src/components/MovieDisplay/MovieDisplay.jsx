@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import MovieCard from "../MovieCard/MovieCard";
 import axios from "axios";
 import { Box } from "@mui/system";
-import { Button, FormControl, TextField } from "@mui/material";
 import "./MovieDisplay.css";
+import { pageTypeMap } from "../../api";
+
 const API_KEY = "d6278b3dc3e6f8f8376a89851c3f8c8f";
 const FEATURED_API = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}`;
 const SEARCH_API = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=`;
@@ -12,12 +13,35 @@ const SEARCH_API = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}
 export default function MovieDisplay() {
   const [movies, setMovies] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageType, setPageType] = useState(Object.keys(pageTypeMap)[0]);
+  const [isLoadMoreAvailable, setIsLoadMoreAvailable] = useState(true);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchTerm) {
       getMovies(SEARCH_API + searchTerm);
     }
   };
+
+  useEffect(() => {
+    async function callAPI() {
+      const { results } = await pageTypeMap[pageType]();
+
+      setMovies(results);
+      setPage(1);
+    }
+    callAPI();
+  }, [pageType]);
+
+  useEffect(() => {
+    async function callAPI() {
+      const { results, totalPages } = await pageTypeMap[pageType](page);
+      setIsLoadMoreAvailable(totalPages > page);
+      setMovies([...movies, ...results]);
+    }
+    callAPI();
+  }, [page]);
 
   useEffect(() => {
     getMovies(FEATURED_API);
@@ -29,6 +53,24 @@ export default function MovieDisplay() {
       .then((res) => setMovies(res.data.results))
       .catch((err) => console.log(err));
   };
+  useEffect(() => {
+    function handleScrollEvent() {
+      if (
+        window.innerHeight + window.scrollY >= document.body.offsetHeight &&
+        isLoadMoreAvailable
+      ) {
+        setPage(page + 1);
+        // here add more items in the 'filteredData' state from the 'allData' state source.
+      }
+    }
+
+    window.addEventListener("scroll", handleScrollEvent);
+
+    return () => {
+      window.removeEventListener("scroll", handleScrollEvent);
+    };
+  }, [page]);
+
   return (
     <>
       <form className="search" onSubmit={handleSubmit}>
@@ -43,6 +85,7 @@ export default function MovieDisplay() {
           Search
         </button>
       </form>
+
       <Box
         sx={{
           margin: "5%",
@@ -61,6 +104,11 @@ export default function MovieDisplay() {
           );
         })}
       </Box>
+      {/* {isLoadMoreAvailable && (
+        <button type="button" className="btn-load-more" onScroll={onLoadMore}>
+          MORE...
+        </button>
+      )} */}
     </>
   );
 }
