@@ -72,7 +72,7 @@ input[type="submit"] {
   font-weight: clamp(60, 100, 120);
   letter-spacing: 10px;
   width: clamp(60%, 100%, 110%);
-  height: clamp(5vh, 7vh, 8vh);
+  height: 50px !important;
 }
 
 input[type="submit"]:hover {
