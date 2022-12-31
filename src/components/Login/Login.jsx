@@ -1,4 +1,4 @@
-import { Button, Link, Typography } from "@mui/material";
+import { Box, Button, Link, Typography } from "@mui/material";
 
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -54,10 +54,33 @@ function Login() {
         {errors.password && errors.password.length > 8 && (
           <p className="error">Password must be 8 characters</p>
         )}
-        {/* <button onClick={handleProviderLogin}>Login with Google</button> */}
+
         <Button onClick={() => forgotPassword(email)}>Forgot password?</Button>
         <input type="submit" />
-        <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            onClick={handleProviderLogin}
+            variant="contained"
+            sx={{
+              marginTop: "20px",
+              width: "clamp(60%, 100%, 110%)",
+              height: "50px",
+              textAlign: "center",
+              fontSize: "clamp(12px, 16px, 22px)",
+              letterSpacing: "6px",
+            }}
+          >
+            Login with Google
+          </Button>
+        </Box>
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            gap: "20px",
+            justifyContent: "center",
+          }}
+        >
           <h5 style={{ font: "Segoe UI", color: "#fff" }}>Need an Account? </h5>
           <Link href="/signup" underline="always" variant="body2">
             {"Register Here"}
