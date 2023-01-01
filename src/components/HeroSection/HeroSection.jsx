@@ -50,6 +50,7 @@ function HeroSection() {
             everything you desire
           </Typography>
           <Button
+            className="explore-btn"
             size="xlarge"
             variant="contained"
             color="navbarcolor"

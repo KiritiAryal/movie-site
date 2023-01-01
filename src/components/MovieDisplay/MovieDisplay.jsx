@@ -104,11 +104,6 @@ export default function MovieDisplay() {
           );
         })}
       </Box>
-      {/* {isLoadMoreAvailable && (
-        <button type="button" className="btn-load-more" onScroll={onLoadMore}>
-          MORE...
-        </button>
-      )} */}
     </>
   );
 }

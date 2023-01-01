@@ -1,10 +1,15 @@
 .img {
   width: 25vw;
-  height: 60vh;
+  height: inherit;
 }
 .img-container {
-  object-fit: contain;
+  height: fit-content;
 }
 .overview {
   line-height: 2.3;
+}
+.ratings {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
