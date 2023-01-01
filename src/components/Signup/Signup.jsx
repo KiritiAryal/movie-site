@@ -10,6 +10,7 @@ function Signup() {
     register,
     handleSubmit,
     watch,
+
     formState: { errors },
   } = useForm();
 

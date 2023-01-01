@@ -19,8 +19,8 @@ import Watchlist from "../components/Watchlist/Watchlist";
 const AppRouter = () => {
   const { currentUser } = useContext(AuthContext);
   function PrivateRouter() {
-    let location = useLocation();
-    if (!currentUser) {
+    const location = useLocation();
+    if (currentUser === false) {
       // Redirect them to the /login page, but save the current location they were
       // trying to go to when they were redirected. This allows us to send them
       // along to that page after they login, which is a nicer user experience
