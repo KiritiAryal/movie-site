@@ -2,7 +2,14 @@
   display: flex;
   background-size: contain;
   position: absolute;
-  top: 1%;
-  left: 1%;
-  right: 1%;
+  top: 2%;
+  left: 2%;
+  right: 2%;
+}
+.select-icon {
+  background-image: url(https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg);
+  background-repeat: no-repeat;
+}
+.user-logo {
+  margin-right: 12px;
 }

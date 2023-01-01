@@ -28,11 +28,18 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
 
-export const createUser = async (email, password, displayName, navigate) => {
+export const createUser = async (
+  email,
+  password,
+  displayName,
+  displayEmail,
+  navigate
+) => {
   try {
     await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(auth.currentUser, {
       displayName: displayName,
+      displayEmail: displayEmail,
     });
     navigate("/");
     toastSuccessNotify("Registered successfully!");

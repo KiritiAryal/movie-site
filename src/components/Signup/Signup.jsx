@@ -10,7 +10,6 @@ function Signup() {
     register,
     handleSubmit,
     watch,
-    getValues,
     formState: { errors },
   } = useForm();
 
@@ -22,7 +21,6 @@ function Signup() {
   const onSubmit = () => {
     const displayName = `${firstName} ${lastName}`;
     createUser(emailAddress, userPassword, displayName, navigate);
-    console.log(firstName, lastName);
   };
 
   return (
