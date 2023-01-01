@@ -28,18 +28,11 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
 
-export const createUser = async (
-  email,
-  password,
-  displayName,
-  displayEmail,
-  navigate
-) => {
+export const createUser = async (email, password, displayName, navigate) => {
   try {
     await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(auth.currentUser, {
       displayName: displayName,
-      displayEmail: displayEmail,
     });
     navigate("/");
     toastSuccessNotify("Registered successfully!");
@@ -49,7 +42,7 @@ export const createUser = async (
 export const signIn = async (email, password, navigate) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    navigate("/");
+    navigate(-1);
     toastSuccessNotify("Logged in successfully!");
   } catch (err) {}
 };
