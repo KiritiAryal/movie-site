@@ -25,7 +25,7 @@ function Login() {
   };
   return (
     <div className="login">
-      <h1>Login</h1>
+      <h1 classname="h1comp">Login</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="userName">User Name</label>

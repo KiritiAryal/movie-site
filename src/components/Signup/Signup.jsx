@@ -2,7 +2,8 @@ import { createUser } from "../../auth/firebase";
 import React from "react";
 import { useForm } from "react-hook-form";
 import "./Signup.css";
-import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 function Signup() {
   const navigate = useNavigate();
 
@@ -26,7 +27,7 @@ function Signup() {
 
   return (
     <div className="login">
-      <h1>Create an Account</h1>
+      <h1 className="h1comp">Create an Account</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <div>
