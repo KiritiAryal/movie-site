@@ -93,7 +93,7 @@ export const getVideos = createAsyncThunk(
           api_key: "d6278b3dc3e6f8f8376a89851c3f8c8f",
         },
       });
-      return data;
+      return data.results[0].key;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response);
     }
@@ -128,7 +128,6 @@ export const getCredits = createAsyncThunk(
 const initialState = {
   movies: [],
   searchTerm: "",
-  trailerVideos: [],
   page: 1,
   isLoading: true,
   isLoadMoreAvailable: true,
@@ -153,7 +152,6 @@ const moviesSlice = createSlice({
       state.movies = [];
     },
     setIsLoadMoreAvailable(state, { payload }) {
-      console.log(payload);
       state.isLoadMoreAvailable = payload;
     },
     setPage(state, { payload }) {
@@ -224,7 +222,8 @@ const moviesSlice = createSlice({
     },
     [getVideos.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.trailerVideos = action.payload;
+
+      state.videoKey = action.payload;
     },
     [getVideos.rejected]: (state) => {
       state.isLoading = false;
@@ -244,7 +243,6 @@ const moviesSlice = createSlice({
     },
     [getCredits.fulfilled]: (state, action) => {
       state.isLoading = false;
-      console.log(action.payload);
       state.actors = action.payload.cast;
     },
     [getCredits.rejected]: (state) => {

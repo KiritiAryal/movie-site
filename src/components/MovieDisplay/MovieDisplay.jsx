@@ -74,7 +74,7 @@ export default function MovieDisplay() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
-      <form className="search" on onSubmit={(e) => handleSubmit}>
+      <form className="search" on onSubmit={(e) => handleSubmit(e)}>
         <input
           type="search"
           className="search-input"
@@ -107,9 +107,10 @@ export default function MovieDisplay() {
           </React.Fragment>
         )}
       </PopupState> */}
-      {Object.keys(pageTypeMap).map((item) => {
+      {Object.keys(pageTypeMap).map((item, i = 1) => {
         return (
           <MenuItem
+            key={i + 1}
             onClick={() => {
               dispatch(clearMovies());
               setPageType(item);
@@ -132,7 +133,7 @@ export default function MovieDisplay() {
         {movies.map((movie) => {
           return (
             <div key={movie.id}>
-              <MovieCard key={movie.id} {...movie} />
+              <MovieCard {...movie} />
             </div>
           );
         })}

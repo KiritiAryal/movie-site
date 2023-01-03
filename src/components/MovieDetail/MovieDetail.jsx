@@ -27,7 +27,6 @@ import {
 } from "../../features/displayMovies/moviesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addWatchlistCt,
   setWatchlistCt,
   setWatchlistObj,
 } from "../../features/watchlist/watchlistSlice";
@@ -51,7 +50,7 @@ const MovieDetail = () => {
   const { movieDetails, videoKey, actors } = useSelector(
     (store) => store.movies
   );
-  const { movieId } = useSelector((store) => store.watchlist);
+  const { watchlistObj, watchlistCt } = useSelector((store) => store.watchlist);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getMovieDetails(id));
@@ -68,6 +67,7 @@ const MovieDetail = () => {
   function handleClick() {
     dispatch(
       setWatchlistObj([
+        ...watchlistObj,
         {
           id: id,
           title: movieDetails?.title,
@@ -79,8 +79,9 @@ const MovieDetail = () => {
         },
       ])
     );
-    dispatch(addWatchlistCt(1));
+    dispatch(setWatchlistCt());
   }
+
   return (
     <Box
       sx={{

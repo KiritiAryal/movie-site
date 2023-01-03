@@ -1,7 +1,6 @@
 import { Box, Card, CardMedia } from "@mui/material";
 import React from "react";
 import "./VideoSection.css";
-
 const VideoSection = ({ videoKey }) => {
   return (
     <Box sx={{ display: "flex", justifyContent: "center" }}>

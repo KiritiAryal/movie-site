@@ -9,28 +9,19 @@ const watchlistSlice = createSlice({
   initialState,
   reducers: {
     setWatchlistObj(state, { payload }) {
-      // let arrayUniqueByKey;
-
-      // const array = [state.watchlistObj, payload];
-      // arrayUniqueByKey = [
-      //   ...new Map(array.map((item) => [item[array.id], item])).values(),
-      // ];
       const data = [...state.watchlistObj, ...payload];
-      console.log(data);
-      let unique = [...new Set(data.map((item) => item.Group))];
-      console.log(unique);
-
-      state.watchlistObj = arrayUniqueByKey;
+      let unique = data.filter(
+        ({ id }, i) => i === data.findIndex(({ id: _id }) => id === _id)
+      );
+      state.watchlistObj = unique;
+      console.log(state.watchlistObj);
     },
-    setWatchlistCt(state, { payload }) {
-      state.watchlistCt = payload;
-    },
-    addWatchlistCt(state, { payload }) {
-      state.watchlistCt = state.watchlistCt + payload;
+    setWatchlistCt(state) {
+      state.watchlistCt = state.watchlistObj.length;
+      console.log(state.watchlistCt);
     },
   },
 });
 
-export const { setMovieId, setWatchlistObj, setWatchlistCt, addWatchlistCt } =
-  watchlistSlice.actions;
+export const { setWatchlistObj, setWatchlistCt } = watchlistSlice.actions;
 export default watchlistSlice.reducer;
