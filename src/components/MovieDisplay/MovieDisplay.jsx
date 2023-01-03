@@ -1,66 +1,67 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import MovieCard from "../MovieCard/MovieCard";
-import axios from "axios";
 import { Box } from "@mui/system";
 import "./MovieDisplay.css";
-import { pageTypeMap } from "../../api";
+import { useDispatch, useSelector } from "react-redux";
+import MenuItem from "@mui/material/MenuItem";
 
-const API_KEY = "d6278b3dc3e6f8f8376a89851c3f8c8f";
-const FEATURED_API = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}`;
-const SEARCH_API = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=`;
+import {
+  getPopular,
+  search,
+  setIsLoadMoreAvailable,
+  setPage,
+  setSearchTerm,
+  getUpcoming,
+  addPage,
+  getTopRated,
+  clearMovies,
+} from "../../features/displayMovies/moviesSlice";
+
+const pageTypeMap = {
+  Popular: getPopular,
+  "Top-Rated": getTopRated,
+  Upcoming: getUpcoming,
+};
 
 export default function MovieDisplay() {
-  const [movies, setMovies] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(1);
   const [pageType, setPageType] = useState(Object.keys(pageTypeMap)[0]);
-  const [isLoadMoreAvailable, setIsLoadMoreAvailable] = useState(true);
+  const { movies, searchTerm, page, isLoadMoreAvailable, totalPages } =
+    useSelector((store) => store.movies);
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchTerm) {
-      getMovies(SEARCH_API + searchTerm);
+      dispatch(search(searchTerm));
     }
   };
-
   useEffect(() => {
-    async function callAPI() {
-      const { results } = await pageTypeMap[pageType]();
-
-      setMovies(results);
+    function callAPI() {
+      dispatch(pageTypeMap[pageType]());
       setPage(1);
     }
     callAPI();
   }, [pageType]);
 
   useEffect(() => {
-    async function callAPI() {
-      const { results, totalPages } = await pageTypeMap[pageType](page);
-      setIsLoadMoreAvailable(totalPages > page);
-      setMovies([...movies, ...results]);
+    function callAPI() {
+      dispatch(pageTypeMap[pageType](page));
+
+      if (totalPages > page) {
+        dispatch(setIsLoadMoreAvailable(true));
+      }
     }
     callAPI();
   }, [page]);
 
-  useEffect(() => {
-    getMovies(FEATURED_API);
-  }, []);
-
-  const getMovies = (API) => {
-    axios
-      .get(API)
-      .then((res) => setMovies(res.data.results))
-      .catch((err) => console.log(err));
-  };
   useEffect(() => {
     function handleScrollEvent() {
       if (
         window.innerHeight + window.scrollY >= document.body.offsetHeight &&
         isLoadMoreAvailable
       ) {
-        setPage(page + 1);
-        // here add more items in the 'filteredData' state from the 'allData' state source.
+        dispatch(addPage(1));
       }
     }
 
@@ -72,20 +73,52 @@ export default function MovieDisplay() {
   }, [page]);
 
   return (
-    <>
-      <form className="search" onSubmit={handleSubmit}>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <form className="search" on onSubmit={(e) => handleSubmit}>
         <input
           type="search"
           className="search-input"
           placeholder="Search a movie..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => dispatch(setSearchTerm(e.target.value))}
         />
         <button type="submit" className="button">
           Search
         </button>
       </form>
-
+      {/* <PopupState variant="popover" popupId="demo-popup-menu">
+        {(popupState) => (
+          <React.Fragment>
+            <Button
+              variant="contained"
+              {...bindTrigger(popupState)}
+              sx={{
+                width: "150px",
+                position: "relative",
+                right: "-1510px",
+                marginBottom: "60px",
+              }}
+            >
+              Sort By
+            </Button>
+            <Menu {...bindMenu(popupState)} sx={{ left: "20px" }}>
+             
+            </Menu>
+          </React.Fragment>
+        )}
+      </PopupState> */}
+      {Object.keys(pageTypeMap).map((item) => {
+        return (
+          <MenuItem
+            onClick={() => {
+              dispatch(clearMovies());
+              setPageType(item);
+            }}
+          >
+            {item}
+          </MenuItem>
+        );
+      })}
       <Box
         sx={{
           margin: "5%",
@@ -104,6 +137,6 @@ export default function MovieDisplay() {
           );
         })}
       </Box>
-    </>
+    </Box>
   );
 }

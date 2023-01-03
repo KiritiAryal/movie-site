@@ -9,7 +9,6 @@ import {
   Typography,
 } from "@mui/material";
 import { withStyles } from "@mui/styles";
-import axios from "axios";
 import React, { useEffect } from "react";
 import { useContext, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -20,6 +19,18 @@ import { BsPlus } from "react-icons/bs";
 import defaultImage from "../../assets/mov.avif";
 
 import Rating from "@mui/material/Rating";
+import {
+  baseImageUrl,
+  getCredits,
+  getMovieDetails,
+  getVideos,
+} from "../../features/displayMovies/moviesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addWatchlistCt,
+  setWatchlistCt,
+  setWatchlistObj,
+} from "../../features/watchlist/watchlistSlice";
 
 function toHoursAndMinutes(totalMinutes) {
   const hours = Math.floor(totalMinutes / 60);
@@ -33,51 +44,43 @@ const WhiteTextTypography = withStyles({
 })(Typography);
 
 const MovieDetail = () => {
-  const [watchlist, setWatchlist] = useState([]);
-  const [watchlistCt, setWatchlistCt] = useState();
   const { currentUser } = useContext(AuthContext);
   const { id } = useParams();
-  const [movieDetails, setMovieDetails] = useState();
-  const [videoKey, setVideoKey] = useState();
-  const [genre, setGenre] = useState();
-  const [actors, setActors] = useState();
+
   let navigate = useNavigate();
-
-  const API_KEY = "d6278b3dc3e6f8f8376a89851c3f8c8f";
-  const movieDetailBaseUrl = `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=en-US`;
-  const videoUrl = `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${API_KEY}`;
-  const baseImageUrl = "https://image.tmdb.org/t/p/w1280";
-  const genreUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}&language=en-US`;
-  const creditUrl = `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${API_KEY}&language=en-US`;
-
+  const { movieDetails, videoKey, actors } = useSelector(
+    (store) => store.movies
+  );
+  const { movieId } = useSelector((store) => store.watchlist);
+  const dispatch = useDispatch();
   useEffect(() => {
-    axios
-      .get(movieDetailBaseUrl)
-      .then((res) => setMovieDetails(res.data))
-      .catch((err) => console.log(err));
-    axios
-      .get(videoUrl)
-      .then((res) => setVideoKey(res.data.results[0].key))
-      .catch((err) => console.log(err));
-    axios
-      .get(genreUrl)
-      .then((res) => setGenre(res.data.genres))
-      .catch((err) => console.log(err));
-    axios
-      .get(creditUrl)
-      .then((res) => setActors(res.data.cast))
-      .catch((err) => console.log(err));
-  }, [movieDetailBaseUrl, videoUrl]);
+    dispatch(getMovieDetails(id));
+    dispatch(getVideos(id));
+    dispatch(getCredits(id));
+  }, []);
 
   const img_src = movieDetails?.poster_path
     ? baseImageUrl + movieDetails?.poster_path
     : defaultImage;
 
-  const handleClick = (id) => {
-    console.log(id);
-  };
   const stars = (movieDetails?.vote_average / 10) * 5;
-
+  const three_leads = actors?.slice(0, 3);
+  function handleClick() {
+    dispatch(
+      setWatchlistObj([
+        {
+          id: id,
+          title: movieDetails?.title,
+          overview: movieDetails?.overview,
+          release_date: movieDetails?.release_date,
+          runtime: movieDetails?.runtime,
+          actors: three_leads,
+          img: img_src,
+        },
+      ])
+    );
+    dispatch(addWatchlistCt(1));
+  }
   return (
     <Box
       sx={{
@@ -145,13 +148,13 @@ const MovieDetail = () => {
                 primary={movieDetails?.adult ? "Rating: 18+" : "Rating: GA"}
               />
             </ListItem>
-            <ListItem>
+            {/* <ListItem>
               <ListItemText
                 primary={
                   "Genre: " + `${genre?.slice(0, 5).map((g) => " " + g.name)}`
                 }
               />
-            </ListItem>
+            </ListItem> */}
             <ListItem>
               <ListItemText
                 primary={
@@ -163,7 +166,7 @@ const MovieDetail = () => {
               <Button
                 variant="contained"
                 onClick={() =>
-                  currentUser ? handleClick(id) : navigate("/login")
+                  currentUser ? handleClick() : navigate("/login")
                 }
               >
                 <BsPlus size={20} /> Add to Watchlist

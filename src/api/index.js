@@ -54,12 +54,43 @@ export async function getByName(query) {
   const type = "/search/movie";
   const {
     data: { results },
-  } = await axios.get(`${API_URL + type}`, {
+  } = await axios(`${API_URL + type}`, {
     params: {
-      api_key: process.env.REACT_APP_TRAILER_MOVIES_WATCH_API_KEY,
+      api_key: "d6278b3dc3e6f8f8376a89851c3f8c8f",
       query,
     },
   });
 
   return results;
 }
+
+export async function getMovieDetails(id) {
+  const type = `/movie/${id}`;
+  const { data } = await axios.get(`${API_URL + type}`, {
+    params: {
+      api_key: "d6278b3dc3e6f8f8376a89851c3f8c8f",
+    },
+  });
+  return data;
+}
+export async function getVideo(id) {
+  const type = `/movie/${id}/videos`;
+  const { data } = await axios.get(`${API_URL + type}`, {
+    params: {
+      api_key: "d6278b3dc3e6f8f8376a89851c3f8c8f",
+    },
+  });
+  return data;
+}
+
+export async function getCredits(id) {
+  const type = `/movie/${id}/credits`;
+  const { data } = await axios.get(`${API_URL + type}`, {
+    params: {
+      api_key: "d6278b3dc3e6f8f8376a89851c3f8c8f",
+    },
+  });
+  return data;
+}
+
+export const baseImageUrl = "https://image.tmdb.org/t/p/w1280";
