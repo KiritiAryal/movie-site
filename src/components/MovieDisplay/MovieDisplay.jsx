@@ -17,6 +17,7 @@ import {
   getTopRated,
   clearMovies,
 } from "../../features/displayMovies/moviesSlice";
+import { Button, Menu } from "@mui/material";
 
 const pageTypeMap = {
   Popular: getPopular,
@@ -82,44 +83,34 @@ export default function MovieDisplay() {
           value={searchTerm}
           onChange={(e) => dispatch(setSearchTerm(e.target.value))}
         />
-        <button type="submit" className="button">
+        <Button variant="contained" size="large" className="button">
           Search
-        </button>
+        </Button>
       </form>
-      {/* <PopupState variant="popover" popupId="demo-popup-menu">
-        {(popupState) => (
-          <React.Fragment>
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "20px",
+          marginBottom: "30px",
+        }}
+      >
+        {Object.keys(pageTypeMap).map((item, i = 1) => {
+          return (
             <Button
-              variant="contained"
-              {...bindTrigger(popupState)}
-              sx={{
-                width: "150px",
-                position: "relative",
-                right: "-1510px",
-                marginBottom: "60px",
+              key={i + 1}
+              onClick={() => {
+                dispatch(clearMovies());
+                setPageType(item);
               }}
+              variant="contained"
             >
-              Sort By
+              {item}
             </Button>
-            <Menu {...bindMenu(popupState)} sx={{ left: "20px" }}>
-             
-            </Menu>
-          </React.Fragment>
-        )}
-      </PopupState> */}
-      {Object.keys(pageTypeMap).map((item, i = 1) => {
-        return (
-          <MenuItem
-            key={i + 1}
-            onClick={() => {
-              dispatch(clearMovies());
-              setPageType(item);
-            }}
-          >
-            {item}
-          </MenuItem>
-        );
-      })}
+          );
+        })}
+      </Box>
       <Box
         sx={{
           margin: "5%",
