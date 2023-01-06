@@ -29,7 +29,6 @@ export default function MovieCard({
   return (
     <>
       <Card
-        className="movie"
         sx={{
           backgroundColor: "#f2f2f2",
           borderRadius: "0.7rem",
@@ -50,14 +49,7 @@ export default function MovieCard({
           image={poster_path ? IMG_API + poster_path : defaultImage}
           alt={`${title}`}
         />
-        <CardContent
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            height: "100%",
-          }}
-        ></CardContent>
+
         <div className="movie-over">
           <h4>{title}</h4>
 

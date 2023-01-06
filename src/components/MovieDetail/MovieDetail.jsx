@@ -17,6 +17,7 @@ import VideoSection from "../VideoSection/VideoSection";
 import "./MovieDetail.css";
 import { BsPlus } from "react-icons/bs";
 import defaultImage from "../../assets/mov.avif";
+import { MdDone } from "react-icons/md";
 
 import Rating from "@mui/material/Rating";
 import {
@@ -27,6 +28,7 @@ import {
 } from "../../features/displayMovies/moviesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  setIsWatchlisted,
   setWatchlistCt,
   setWatchlistObj,
 } from "../../features/watchlist/watchlistSlice";
@@ -50,7 +52,9 @@ const MovieDetail = () => {
   const { movieDetails, videoKey, actors } = useSelector(
     (store) => store.movies
   );
-  const { watchlistObj, watchlistCt } = useSelector((store) => store.watchlist);
+  const { watchlistObj, isWatchlisted } = useSelector(
+    (store) => store.watchlist
+  );
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getMovieDetails(id));
@@ -76,10 +80,12 @@ const MovieDetail = () => {
           runtime: movieDetails?.runtime,
           actors: three_leads,
           img: img_src,
+          vote: movieDetails?.vote_average,
         },
       ])
     );
     dispatch(setWatchlistCt());
+    dispatch(setIsWatchlisted(isWatchlisted));
   }
 
   return (
@@ -171,6 +177,17 @@ const MovieDetail = () => {
                 }
               >
                 <BsPlus size={20} /> Add to Watchlist
+                {/* {!isWatchlisted ? (
+                  <>
+                    <BsPlus size={20} /> Add to Watchlist
+                  </>
+                ) : (
+                  <Box
+                    sx={{ display: "flex", gap: "5px", alignItems: "center" }}
+                  >
+                    <MdDone size={20} /> Is Watchlisted
+                  </Box>
+                )} */}
               </Button>
             </ListItem>
             <ListItem>

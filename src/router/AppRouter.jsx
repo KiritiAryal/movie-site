@@ -15,7 +15,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
 import MovieDetail from "../components/MovieDetail/MovieDetail";
 import HeroSection from "../components/HeroSection/HeroSection";
-import Watchlist from "../components/Watchlist/Watchlist";
+import WatchlistDisplay from "../components/WatchlistDisplay/WatchlistDisplay";
 const AppRouter = () => {
   const { currentUser } = useContext(AuthContext);
   function PrivateRouter() {
@@ -39,7 +39,7 @@ const AppRouter = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/details/:id" element={<MovieDetail />} />
         <Route element={<PrivateRouter />}>
-          <Route path="/watchlist" element={<Watchlist />}></Route>
+          <Route path="/watchlist" element={<WatchlistDisplay />}></Route>
         </Route>
       </Routes>
     </Router>

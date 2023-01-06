@@ -18,10 +18,25 @@ const watchlistSlice = createSlice({
     },
     setWatchlistCt(state) {
       state.watchlistCt = state.watchlistObj.length;
-      console.log(state.watchlistCt);
+    },
+    remove(state, { payload }) {
+      state.watchlistObj = state.watchlistObj.filter(
+        (item) => item.id !== payload
+      );
+      state.watchlistCt = state.watchlistObj.length;
+    },
+    clearList(state) {
+      state.watchlistObj = [];
+      state.watchlistCt = 0;
     },
   },
 });
 
-export const { setWatchlistObj, setWatchlistCt } = watchlistSlice.actions;
+export const {
+  setWatchlistObj,
+  setWatchlistCt,
+  remove,
+  clearList,
+  setIsWatchlisted,
+} = watchlistSlice.actions;
 export default watchlistSlice.reducer;
