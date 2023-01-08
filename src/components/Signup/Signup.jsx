@@ -3,6 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import "./Signup.css";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const navigate = useNavigate();

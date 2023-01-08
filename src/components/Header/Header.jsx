@@ -80,10 +80,19 @@ export default function NavBar() {
                   </Typography>
                   <Typography variant="body2">{currentUser?.email}</Typography>
                 </Box>
-                <Button onClick={() => navigate("/watchlist")}>
+                <Button
+                  onClick={() => {
+                    navigate("/watchlist");
+                    window.location.reload(true);
+                  }}
+                >
                   <Typography textAlign="center">Watchlist</Typography>
                 </Button>
-                <Button onClick={() => logOut()}>
+                <Button
+                  onClick={() => {
+                    logOut();
+                  }}
+                >
                   <Typography textAlign="center">Logout</Typography>
                 </Button>
               </Box>

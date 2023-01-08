@@ -1,4 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../auth/firebase";
+
+export const updatelist = async (arr, email) => {
+  try {
+    await updateDoc(doc(db, email, "watchlist"), {
+      array: arr,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const initialState = {
   watchlistObj: [],
@@ -14,20 +26,20 @@ const watchlistSlice = createSlice({
         ({ id }, i) => i === data.findIndex(({ id: _id }) => id === _id)
       );
       state.watchlistObj = unique;
-      console.log(state.watchlistObj);
     },
     setWatchlistCt(state) {
       state.watchlistCt = state.watchlistObj.length;
     },
     remove(state, { payload }) {
-      state.watchlistObj = state.watchlistObj.filter(
-        (item) => item.id !== payload
-      );
+      const { id, email } = payload;
+      state.watchlistObj = state.watchlistObj.filter((item) => item.id !== id);
       state.watchlistCt = state.watchlistObj.length;
+      updatelist([...state.watchlistObj], email);
     },
-    clearList(state) {
+    clearList(state, { payload }) {
       state.watchlistObj = [];
       state.watchlistCt = 0;
+      updatelist([...state.watchlistObj], payload);
     },
   },
 });
