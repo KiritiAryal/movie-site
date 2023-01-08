@@ -14,13 +14,13 @@ import {
 } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAE3qPuNkbHy19I5511y010pxp-ApFl0Fs",
-  authDomain: "movie-project-7e2a6.firebaseapp.com",
-  projectId: "movie-project-7e2a6",
-  storageBucket: "movie-project-7e2a6.appspot.com",
-  messagingSenderId: "1067867559705",
-  appId: "1:1067867559705:web:b3111fb20bb53f13d65788",
-  measurementId: "G-N5K9VQ89EF",
+  apiKey: "AIzaSyC4YY4UDVkJJH-0qtC0xAVhhPLV5jHAa9I",
+  authDomain: "movie-site-cf2df.firebaseapp.com",
+  projectId: "movie-site-cf2df",
+  storageBucket: "movie-site-cf2df.appspot.com",
+  messagingSenderId: "395097110669",
+  appId: "1:395097110669:web:fcdfe07108d2fbf0450ac4",
+  measurementId: "G-TP6NLBYE1G",
 };
 
 // Initialize Firebase
@@ -81,4 +81,4 @@ export const forgotPassword = (email) => {
     })
     .catch((err) => {});
 };
-export const db = getFirestore(app);
+export const db = getFirestore();

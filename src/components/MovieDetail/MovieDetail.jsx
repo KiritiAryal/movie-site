@@ -18,7 +18,15 @@ import "./MovieDetail.css";
 import { BsPlus } from "react-icons/bs";
 import defaultImage from "../../assets/mov.avif";
 import { MdDone } from "react-icons/md";
-
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "../../auth/firebase";
 import Rating from "@mui/material/Rating";
 import {
   baseImageUrl,
@@ -45,6 +53,7 @@ const WhiteTextTypography = withStyles({
 })(Typography);
 
 const MovieDetail = () => {
+  const [watchlist, setWatchlist] = useState();
   const { currentUser } = useContext(AuthContext);
   const { id } = useParams();
 
@@ -61,31 +70,68 @@ const MovieDetail = () => {
     dispatch(getVideos(id));
     dispatch(getCredits(id));
   }, []);
-
   const img_src = movieDetails?.poster_path
     ? baseImageUrl + movieDetails?.poster_path
     : defaultImage;
-
+  async function setList(object) {
+    await setDoc(doc(db, currentUser?.email, "watchlist"), object);
+  }
+  async function updateList(arr) {
+    await updateDoc(doc(db, currentUser?.email, "watchlist"), { array: arr });
+  }
+  useEffect(() => {
+    if (currentUser) {
+      onSnapshot(doc(db, currentUser?.email, "watchlist"), (doc) => {
+        let data = doc.data();
+        setWatchlist(data);
+      });
+    } else {
+      console.log("problem");
+    }
+  }, []);
   const stars = (movieDetails?.vote_average / 10) * 5;
   const three_leads = actors?.slice(0, 3);
   function handleClick() {
-    dispatch(
-      setWatchlistObj([
-        ...watchlistObj,
-        {
-          id: id,
-          title: movieDetails?.title,
-          overview: movieDetails?.overview,
-          release_date: movieDetails?.release_date,
-          runtime: movieDetails?.runtime,
-          actors: three_leads,
-          img: img_src,
-          vote: movieDetails?.vote_average,
-        },
-      ])
-    );
+    if (currentUser) {
+      (async () => {
+        try {
+          if (watchlist === undefined) {
+            const listRef = collection(db, currentUser?.email);
+            setWatchlist({
+              array: [
+                {
+                  id: id,
+                  title: movieDetails?.title,
+                  overview: movieDetails?.overview,
+                  release_date: movieDetails?.release_date,
+                  runtime: movieDetails?.runtime,
+                  actors: three_leads,
+                  img: img_src,
+                  vote: movieDetails?.vote_average,
+                },
+              ],
+            });
+          } else {
+            updateList([
+              ...watchlist.array,
+              {
+                id: id,
+                title: movieDetails?.title,
+                overview: movieDetails?.overview,
+                release_date: movieDetails?.release_date,
+                runtime: movieDetails?.runtime,
+                actors: three_leads,
+                img: img_src,
+                vote: movieDetails?.vote_average,
+              },
+            ]);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+    }
     dispatch(setWatchlistCt());
-    dispatch(setIsWatchlisted(isWatchlisted));
   }
 
   return (

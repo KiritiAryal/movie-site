@@ -6,20 +6,44 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { BsTrash } from "react-icons/bs";
 import { MdDone } from "react-icons/md";
 
 import "./WatchlistDisplay.css";
-import { remove, clearList } from "../../features/watchlist/watchlistSlice";
+import {
+  remove,
+  clearList,
+  setWatchlistObj,
+  setWatchlistCt,
+} from "../../features/watchlist/watchlistSlice";
+import { db } from "../../auth/firebase";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { AuthContext } from "../../context/AuthContext";
 
 function Watchlist() {
+  const { currentUser } = useContext(AuthContext);
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const { watchlistCt, watchlistObj } = useSelector((store) => store.watchlist);
+  async function updateList(arr) {
+    await updateDoc(doc(db, currentUser?.email, "watchlist"), { array: arr });
+  }
+  useEffect(() => {
+    if (currentUser) {
+      onSnapshot(doc(db, currentUser?.email, "watchlist"), (doc) => {
+        let data = doc.data();
+        dispatch(setWatchlistObj(data.array));
+        dispatch(setWatchlistCt());
+      });
+    } else {
+      console.log("problem");
+    }
+  }, []);
+
   return (
     <Card
       sx={{
@@ -49,7 +73,6 @@ function Watchlist() {
             className="edit-button"
             onClick={() => {
               setEditMode(!editMode);
-              console.log(editMode);
             }}
           >
             {editMode && watchlistCt ? (
@@ -86,6 +109,7 @@ function Watchlist() {
         ) : (
           <></>
         )}
+
         {watchlistObj.map((w) => {
           const {
             id,
@@ -110,6 +134,7 @@ function Watchlist() {
             const minutes = totalMinutes % 60;
             return `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`;
           }
+
           return (
             <div className="watchlist-card" key={w.id}>
               <Box sx={{ display: "flex" }}>
@@ -130,7 +155,7 @@ function Watchlist() {
                   </a>
                   <Box sx={{ display: "flex" }}>
                     <Typography sx={{ color: "#aaa" }}>
-                      <p className="star"></p> {vote.toFixed(1)}
+                      <p className="star"></p> {vote?.toFixed(1)}
                     </Typography>
                     <p className="seperator">|</p>
                     <Typography
@@ -146,7 +171,7 @@ function Watchlist() {
                   </Box>
 
                   <Box sx={{ display: "flex" }}>
-                    {actors.map((actor) => {
+                    {actors?.map((actor) => {
                       return (
                         <Box
                           sx={{
@@ -175,7 +200,9 @@ function Watchlist() {
               {editMode ? (
                 <button
                   className="remove-btn"
-                  onClick={() => dispatch(remove(id))}
+                  onClick={() =>
+                    dispatch(remove({ id, email: currentUser?.email }))
+                  }
                 >
                   <BsTrash fill="red" size={20} className="icon" />
                   Remove
@@ -193,7 +220,7 @@ function Watchlist() {
           <Button
             variant="outlined"
             className="clear-btn"
-            onClick={() => dispatch(clearList())}
+            onClick={() => dispatch(clearList(currentUser?.email))}
           >
             clear cart
           </Button>

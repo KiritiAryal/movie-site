@@ -4,7 +4,6 @@ import MovieCard from "../MovieCard/MovieCard";
 import { Box } from "@mui/system";
 import "./MovieDisplay.css";
 import { useDispatch, useSelector } from "react-redux";
-import MenuItem from "@mui/material/MenuItem";
 
 import {
   getPopular,
