@@ -53,7 +53,7 @@ const WhiteTextTypography = withStyles({
 })(Typography);
 
 const MovieDetail = () => {
-  const [watchlist, setWatchlist] = useState();
+  const [watchlist, setWatchlist] = useState({});
   const { currentUser } = useContext(AuthContext);
   const { id } = useParams();
 
@@ -96,8 +96,7 @@ const MovieDetail = () => {
       (async () => {
         try {
           if (watchlist === undefined) {
-            const listRef = collection(db, currentUser?.email);
-            setWatchlist({
+            setList({
               array: [
                 {
                   id: id,
@@ -113,7 +112,7 @@ const MovieDetail = () => {
             });
           } else {
             updateList([
-              ...watchlist.array,
+              ...watchlist?.array,
               {
                 id: id,
                 title: movieDetails?.title,

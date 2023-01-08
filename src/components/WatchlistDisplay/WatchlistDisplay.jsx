@@ -36,8 +36,10 @@ function Watchlist() {
     if (currentUser) {
       onSnapshot(doc(db, currentUser?.email, "watchlist"), (doc) => {
         let data = doc.data();
-        dispatch(setWatchlistObj(data.array));
-        dispatch(setWatchlistCt());
+        if (data) {
+          dispatch(setWatchlistObj(data.array));
+          dispatch(setWatchlistCt());
+        }
       });
     } else {
       console.log("problem");
