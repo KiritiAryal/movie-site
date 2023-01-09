@@ -3,6 +3,8 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Modal,
+  Stack,
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
@@ -12,6 +14,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { BsTrash } from "react-icons/bs";
 import { MdDone } from "react-icons/md";
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  color: "#fff",
+  width: 400,
+  bgcolor: "#000000",
+  border: "2px solid #000",
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+};
 import "./WatchlistDisplay.css";
 import {
   remove,
@@ -29,9 +45,15 @@ function Watchlist() {
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const { watchlistCt, watchlistObj } = useSelector((store) => store.watchlist);
-  async function updateList(arr) {
-    await updateDoc(doc(db, currentUser?.email, "watchlist"), { array: arr });
-  }
+  const [open, setOpen] = useState(false);
+  const handleClose = () => setOpen(false);
+  const handleCancel = () => setOpen(false);
+
+  const handleSubmit = () => {
+    dispatch(clearList(currentUser?.email));
+    setOpen(false);
+  };
+
   useEffect(() => {
     if (currentUser) {
       onSnapshot(doc(db, currentUser?.email, "watchlist"), (doc) => {
@@ -42,7 +64,6 @@ function Watchlist() {
         }
       });
     } else {
-      console.log("problem");
     }
   }, []);
 
@@ -157,7 +178,7 @@ function Watchlist() {
                   </a>
                   <Box sx={{ display: "flex" }}>
                     <Typography sx={{ color: "#aaa" }}>
-                      <p className="star"></p> {vote?.toFixed(1)}
+                      <span className="star"></span> {vote?.toFixed(1)}
                     </Typography>
                     <p className="seperator">|</p>
                     <Typography
@@ -176,6 +197,7 @@ function Watchlist() {
                     {actors?.map((actor) => {
                       return (
                         <Box
+                          key={actor.id}
                           sx={{
                             display: "flex",
                             marginTop: "4px",
@@ -218,15 +240,58 @@ function Watchlist() {
         })}
       </Box>
       {editMode && watchlistCt ? (
-        <footer>
-          <Button
-            variant="outlined"
-            className="clear-btn"
-            onClick={() => dispatch(clearList(currentUser?.email))}
+        <div>
+          <footer>
+            <Button
+              variant="outlined"
+              className="clear-btn"
+              onClick={() => setOpen(true)}
+            >
+              clear cart
+            </Button>
+          </footer>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
           >
-            clear cart
-          </Button>
-        </footer>
+            <Box sx={style}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 3,
+                  alignItems: "center",
+                  border: "10px solid black",
+                }}
+              >
+                <Typography variant="h6" component="h2">
+                  Clear All from Watchlist?
+                </Typography>
+                <Box sx={{ display: "flex", gap: 3 }}>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    onClick={handleSubmit}
+                    sx={{ width: "100px" }}
+                  >
+                    Confirm
+                  </Button>
+
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="large"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+          </Modal>
+        </div>
       ) : (
         <></>
       )}

@@ -7,7 +7,7 @@ const VideoSection = ({ videoKey }) => {
       <Card sx={{ height: "60vh", width: "50vw", display: "flex" }}>
         <iframe
           className="aspect-ratio"
-          src={`https://www.youtube.com/embed/${videoKey}?autoplay=1&mute=1`}
+          src={`https://www.youtube-nocookie.com/embed/${videoKey}?autoplay=1&mute=1`}
           title="YouTube video"
           allowFullScreen
         ></iframe>

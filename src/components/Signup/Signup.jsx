@@ -2,7 +2,6 @@ import { createUser } from "../../auth/firebase";
 import React from "react";
 import { useForm } from "react-hook-form";
 import "./Signup.css";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 function Signup() {
@@ -42,7 +41,9 @@ function Signup() {
                 maxLength: 80,
               })}
             />
-            {errors.firstName && <p>This filed is required</p>}
+            {errors.firstName && (
+              <p className="error">This filed is required</p>
+            )}
           </div>
 
           <div>
@@ -56,22 +57,22 @@ function Signup() {
                 maxLength: 80,
               })}
             />
-            {errors.lastName && <p>This field is required</p>}
+            {errors.lastName && <p className="error">This field is required</p>}
           </div>
         </div>
 
         <div>
           <label htmlFor="email">Email Address</label>
           <input
-            type="text"
+            type="email"
             placeholder="Email Address"
             {...register("emailAddress", {
               required: true,
-              maxLength: 80,
+              minLength: 8,
             })}
           />
         </div>
-        {errors.firstName && <p className="error">This filed is required</p>}
+        {errors.emailAddress && <p className="error">Invalid Email</p>}
 
         <div>
           <label htmlFor="password">Password</label>
@@ -84,7 +85,9 @@ function Signup() {
             })}
           />
         </div>
-        {errors.password && <p>Password must be 8 characters</p>}
+        {errors.password && (
+          <p className="error">Password must be 8 characters</p>
+        )}
 
         <input type="submit" />
       </form>

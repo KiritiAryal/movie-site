@@ -25,7 +25,8 @@ function Login() {
   };
   return (
     <div className="login">
-      <h1 classname="h1comp">Login</h1>
+      <h1 className="h1comp">Login</h1>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="userName">User Name</label>
@@ -34,12 +35,12 @@ function Login() {
             placeholder="Your email"
             {...register("userName", {
               required: true,
-              minLength: 3,
+              minLength: 8,
               maxLength: 80,
             })}
           />
         </div>
-        {errors.userName && <p>Your user name is invalid</p>}
+        {errors.userName && <p className="error">Your user name is invalid</p>}
         <div>
           <label htmlFor="password">Password</label>
           <input
@@ -47,11 +48,11 @@ function Login() {
             placeholder="Password"
             {...register("password", {
               required: true,
-              minLength: 3,
+              minLength: 8,
             })}
           />
         </div>
-        {errors.password && errors.password.length > 8 && (
+        {errors.password && (
           <p className="error">Password must be 8 characters</p>
         )}
 
