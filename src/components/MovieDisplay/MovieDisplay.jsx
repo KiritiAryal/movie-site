@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import MovieCard from "../MovieCard/MovieCard";
 import { Box } from "@mui/system";
 import "./MovieDisplay.css";
 import { useDispatch, useSelector } from "react-redux";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 
 import {
   getPopular,
@@ -16,7 +18,8 @@ import {
   getTopRated,
   clearMovies,
 } from "../../features/displayMovies/moviesSlice";
-import { Button, Menu } from "@mui/material";
+import { Button } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
 const pageTypeMap = {
   Popular: getPopular,
@@ -24,7 +27,18 @@ const pageTypeMap = {
   Upcoming: getUpcoming,
 };
 
+const useStyles = makeStyles((theme) => ({
+  hidePadding: {
+    "& .MuiSelect-outlined": {
+      paddingBottom: "20px",
+    },
+  },
+}));
 export default function MovieDisplay() {
+  const [open, setOpen] = useState(false);
+  const [sort, setSort] = React.useState("");
+  const classes = useStyles();
+
   const [pageType, setPageType] = useState(Object.keys(pageTypeMap)[0]);
   const { movies, searchTerm, page, isLoadMoreAvailable, totalPages } =
     useSelector((store) => store.movies);
@@ -74,7 +88,7 @@ export default function MovieDisplay() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
-      <form className="search" on onSubmit={(e) => handleSubmit(e)}>
+      <form className="search" onSubmit={(e) => handleSubmit(e)}>
         <input
           type="search"
           className="search-input"
@@ -87,29 +101,39 @@ export default function MovieDisplay() {
         </Button>
       </form>
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "20px",
-          marginBottom: "30px",
-        }}
-      >
-        {Object.keys(pageTypeMap).map((item, i = 1) => {
-          return (
-            <Button
-              key={i + 1}
-              onClick={() => {
-                dispatch(clearMovies());
-                setPageType(item);
-              }}
-              variant="contained"
-            >
-              {item}
-            </Button>
-          );
-        })}
-      </Box>
+      <div className="sort">
+        <Select
+          open={open}
+          onClick={(event) => {
+            setOpen(!open);
+            event.preventDefault();
+          }}
+          displayEmpty
+          value=""
+          label="sort"
+          variant="outlined"
+          classes={{
+            outlined: classes.hideIconPadding,
+            icon: classes.hideIcon,
+          }}
+          renderValue={(_selected) => "Sort By"}
+        >
+          {Object.keys(pageTypeMap).map((item, i = 1) => {
+            return (
+              <MenuItem
+                key={i + 1}
+                onClick={(e) => {
+                  e.preventDefault();
+                  dispatch(clearMovies());
+                  setPageType(item);
+                }}
+              >
+                {item}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </div>
       <Box
         sx={{
           margin: "5%",

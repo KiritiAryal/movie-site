@@ -23,9 +23,7 @@ const firebaseConfig = {
   measurementId: "G-TP6NLBYE1G",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
 
 export const createUser = async (email, password, displayName, navigate) => {
@@ -35,16 +33,18 @@ export const createUser = async (email, password, displayName, navigate) => {
       displayName: displayName,
     });
     navigate("/");
-    toastSuccessNotify("Registered successfully!");
-  } catch (err) {}
+  } catch (err) {
+    alert(err);
+  }
 };
 
 export const signIn = async (email, password, navigate) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
     navigate(-1);
-    toastSuccessNotify("Logged in successfully!");
-  } catch (err) {}
+  } catch (err) {
+    alert("Wrong username or password");
+  }
 };
 
 export const logOut = () => {
@@ -56,19 +56,15 @@ export const userObserver = (setCurrentUser) => {
     if (currentUser) {
       setCurrentUser(currentUser);
     } else {
-      // User is signed out
       setCurrentUser(false);
     }
   });
 };
 
-//* https://console.firebase.google.com/
-//* => Authentication => sign-in-method => enable Google
 export const signUpProvider = (navigate) => {
   const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider)
     .then((result) => {
-      console.log(result);
       navigate("/");
     })
     .catch((error) => {});
@@ -76,9 +72,7 @@ export const signUpProvider = (navigate) => {
 
 export const forgotPassword = (email) => {
   sendPasswordResetEmail(auth, email)
-    .then(() => {
-      // Password reset email sent!
-    })
+    .then(() => {})
     .catch((err) => {});
 };
 export const db = getFirestore();

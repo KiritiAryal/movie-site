@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../auth/firebase";
 
 export const updatelist = async (arr, email) => {
@@ -7,9 +7,12 @@ export const updatelist = async (arr, email) => {
     await updateDoc(doc(db, email, "watchlist"), {
       array: arr,
     });
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
+};
+export const setList = async (object, email) => {
+  try {
+    await setDoc(doc(db, email, "watchlist"), object);
+  } catch (error) {}
 };
 
 const initialState = {

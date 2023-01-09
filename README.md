@@ -1,8 +1,6 @@
-# Movie Booking System
+# Movie Site
 
-## React for FrontEnd and SpringBoot for BackEnd
-
-## Instructions for running frontend
+## Instructions for running project
 
 Install dependencies
 
@@ -16,9 +14,4 @@ Run project on your local system
 yarn dev
 ```
 
-
-
-## Instruction for running backend.
-```
-mvn spring-boot:run
-```
+You can browse the movies from popular, top-rated and upcoming and add them into your personal watchlist. You need to login to make your watchlist. The watchlist is saved in firestore, so you can easily access them after logout and also maintain different accounts.

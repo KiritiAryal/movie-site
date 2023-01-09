@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -9,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { withStyles } from "@mui/styles";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useContext, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -18,14 +19,7 @@ import "./MovieDetail.css";
 import { BsPlus } from "react-icons/bs";
 import defaultImage from "../../assets/mov.avif";
 import { MdDone } from "react-icons/md";
-import {
-  collection,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  onSnapshot,
-} from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../auth/firebase";
 import Rating from "@mui/material/Rating";
 import {
@@ -36,10 +30,11 @@ import {
 } from "../../features/displayMovies/moviesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setIsWatchlisted,
+  setList,
   setWatchlistCt,
-  setWatchlistObj,
+  updatelist,
 } from "../../features/watchlist/watchlistSlice";
+import { Stack } from "@mui/system";
 
 function toHoursAndMinutes(totalMinutes) {
   const hours = Math.floor(totalMinutes / 60);
@@ -53,17 +48,20 @@ const WhiteTextTypography = withStyles({
 })(Typography);
 
 const MovieDetail = () => {
+  const alertRef = useRef();
   const [watchlist, setWatchlist] = useState({});
+
   const { currentUser } = useContext(AuthContext);
+  // const [isWatchlisted, setIsWatchlisted] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const email = currentUser?.email;
   const { id } = useParams();
 
   let navigate = useNavigate();
   const { movieDetails, videoKey, actors } = useSelector(
     (store) => store.movies
   );
-  const { watchlistObj, isWatchlisted } = useSelector(
-    (store) => store.watchlist
-  );
+  const { watchlistObj } = useSelector((store) => store.watchlist);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getMovieDetails(id));
@@ -73,20 +71,20 @@ const MovieDetail = () => {
   const img_src = movieDetails?.poster_path
     ? baseImageUrl + movieDetails?.poster_path
     : defaultImage;
-  async function setList(object) {
-    await setDoc(doc(db, currentUser?.email, "watchlist"), object);
-  }
-  async function updateList(arr) {
-    await updateDoc(doc(db, currentUser?.email, "watchlist"), { array: arr });
-  }
+  // function handleAlertClose() {
+  //   setTimer(
+  //     setTimeout(() => {
+  //       setShowAlert(false);
+  //     }, 5000)
+  //   );
+  // }
   useEffect(() => {
     if (currentUser) {
-      onSnapshot(doc(db, currentUser?.email, "watchlist"), (doc) => {
+      onSnapshot(doc(db, email, "watchlist"), (doc) => {
         let data = doc.data();
         setWatchlist(data);
       });
     } else {
-      console.log("problem");
     }
   }, []);
   const stars = (movieDetails?.vote_average / 10) * 5;
@@ -96,8 +94,27 @@ const MovieDetail = () => {
       (async () => {
         try {
           if (watchlist === undefined) {
-            setList({
-              array: [
+            setList(
+              {
+                array: [
+                  {
+                    id: id,
+                    title: movieDetails?.title,
+                    overview: movieDetails?.overview,
+                    release_date: movieDetails?.release_date,
+                    runtime: movieDetails?.runtime,
+                    actors: three_leads,
+                    img: img_src,
+                    vote: movieDetails?.vote_average,
+                  },
+                ],
+              },
+              email
+            );
+          } else {
+            updatelist(
+              [
+                ...watchlist?.array,
                 {
                   id: id,
                   title: movieDetails?.title,
@@ -109,28 +126,19 @@ const MovieDetail = () => {
                   vote: movieDetails?.vote_average,
                 },
               ],
-            });
-          } else {
-            updateList([
-              ...watchlist?.array,
-              {
-                id: id,
-                title: movieDetails?.title,
-                overview: movieDetails?.overview,
-                release_date: movieDetails?.release_date,
-                runtime: movieDetails?.runtime,
-                actors: three_leads,
-                img: img_src,
-                vote: movieDetails?.vote_average,
-              },
-            ]);
+              email
+            );
           }
-        } catch (error) {
-          console.log(error);
-        }
+        } catch (error) {}
       })();
     }
     dispatch(setWatchlistCt());
+    setShowAlert(true);
+    alertRef.current.scrollIntoView({
+      behaviour: "smooth",
+      block: "nearest",
+      inline: "start",
+    });
   }
 
   return (
@@ -217,12 +225,12 @@ const MovieDetail = () => {
             <ListItem>
               <Button
                 variant="contained"
-                onClick={() =>
-                  currentUser ? handleClick() : navigate("/login")
-                }
+                onClick={() => {
+                  currentUser ? handleClick() : navigate("/login");
+                }}
               >
                 <BsPlus size={20} /> Add to Watchlist
-                {/* {!isWatchlisted ? (
+                {/* {isWatchlisted ? (
                   <>
                     <BsPlus size={20} /> Add to Watchlist
                   </>
@@ -236,10 +244,23 @@ const MovieDetail = () => {
               </Button>
             </ListItem>
             <ListItem>
-              <Link to={-1}>
+              <Link to={"/"}>
                 <Button>Back to Browse</Button>
               </Link>
             </ListItem>
+            {/* <ListItem>
+              {showAlert && (
+                <Stack
+                  ref={alertRef}
+                  sx={{ margin: "8px", width: "100%" }}
+                  spacing={2}
+                >
+                  <Alert onClose={() => handleAlertClose()}>
+                    Added to Watchlist!
+                  </Alert>
+                </Stack>
+              )}
+            </ListItem> */}
           </List>
         </Card>
       </Card>

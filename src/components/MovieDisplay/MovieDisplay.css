@@ -14,3 +14,10 @@
   position: absolute;
   top: -5px;
 }
+.sort {
+  position: relative;
+  border-radius: 0.3rem;
+  width: 98px;
+  left: 77.9vw;
+  background-color: aliceblue;
+}
