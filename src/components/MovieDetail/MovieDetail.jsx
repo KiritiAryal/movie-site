@@ -133,12 +133,6 @@ const MovieDetail = () => {
       })();
     }
     dispatch(setWatchlistCt());
-    setShowAlert(true);
-    alertRef.current.scrollIntoView({
-      behaviour: "smooth",
-      block: "nearest",
-      inline: "start",
-    });
   }
 
   return (
