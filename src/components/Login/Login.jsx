@@ -6,7 +6,6 @@ import "./Login.css";
 import { forgotPassword, signIn, signUpProvider } from "../../auth/firebase";
 import { useNavigate } from "react-router-dom";
 function Login() {
-  
   const navigate = useNavigate();
   const {
     register,
