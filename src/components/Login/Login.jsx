@@ -20,6 +20,7 @@ function Login() {
   const onSubmit = (event) => {
     signIn(email, password, navigate);
   };
+  
   const handleProviderLogin = () => {
     signUpProvider(navigate);
   };
