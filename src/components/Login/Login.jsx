@@ -23,7 +23,6 @@ function Login() {
   const handleProviderLogin = () => {
     signUpProvider(navigate);
   };
-  
   return (
     <div className="login">
       <h1 className="h1comp">Login</h1>
