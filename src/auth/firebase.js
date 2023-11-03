@@ -38,6 +38,7 @@ export const createUser = async (email, password, displayName, navigate) => {
   }
 };
 
+
 export const signIn = async (email, password, navigate) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
