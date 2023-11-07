@@ -23,7 +23,6 @@ const AppRouter = () => {
     if (currentUser === false) {
       return <Navigate to="/login" state={{ from: location }} replace />;
     }
-
     return <Outlet />;
   }
   return (
